@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8 />
+<title>Driving directions</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
+<link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+<script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.2.min.js"></script>
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+</style>
+
+<head>
+    <style>
+    header {
+            padding: 6px 10%;
+            text-align: left;
+    }
+    body {
+            margin: 0;
+            padding: 0;
+            background: #1f1f1f;
+            font-family: Lato, sans-serif;
+            color: #bebaba;
+    }
+    h1 {
+        position: relative;
+        display: inline-block;
+        margin-right: 5px;
+        color: #ffffff;
+        text-shadow: 1px 1px #9d9d9d;
+        font-size: 30px;
+        padding-right: 175px;
+
+    }
+    h2 {
+        position: relative;
+        display: inline-block;
+        margin-top: 10px;
+        color: #ffffff;
+        text-shadow: 1px 1px #9d9d9d;
+        text-align: left;
+        font-size: 15px;
+        padding-top: 10px;
+            
+    }
+    #map {
+        margin-top: 10%;
+    }
+    #inputs,
+    #errors,
+    #directions {
+        position: absolute;
+        width: 33.3333%;
+        max-width: 300px;
+        min-width: 200px;
+    }
+
+    #inputs {
+        z-index: 10;
+        top: 350px;
+        left: 10px;
+        padding-top: 10%;
+    }
+    .mapbox-directions-destination {
+        background-color: white;
+        position: fixed;
+        bottom: 40px;
+        left: 400px;
+    }
+    .mapbox-directions-profile {
+        display: none;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        padding: 2px;
+        border-radius: 15px;
+        vertical-align: middle;
+        background: rgba(0,0,0,.1);
+    }
+    .mapbox-reverse-icon {
+        display: none;
+        right: 100px;
+    }
+    .mapbox-directions-reverse-input {
+        display: none;
+    }
+    .mapbox-directions-icon {
+    background-image: url('mapbox.directions.png');
+    background-size: 280px 20px;
+    background-repeat: no-repeat;
+    margin: 0;
+    content: '';
+    display: none;
+    vertical-align: top;
+    width: 20px;
+    height: 122px;
+}
+    #mapbox-directions-icon mapbox-reverse-icon mapbox-directions-reverse-input {
+        display: none;
+
+    }
+        
+
+    #directions {
+        z-index: 99;
+        background: rgba(0,0,0,.8);
+        top: 0;
+        margin-top: 10%;
+        right: 0;
+        bottom: 0;
+        overflow: auto;
+    }
+
+    #errors {
+        z-index: 8;
+        opacity: 0;
+        padding: 10px;
+        border-radius: 0 0 3px 3px;
+        background: rgba(0,0,0,.25);
+        top: 90px;
+        left: 10px;
+    }
+
+
+    </style>
+</head>
+<body>
+    <header>
+    <h1>Cycle Safe - Route Planning</h1>
+    <h2>Planning your next bicycle trip?<br>Choose Point A and B for Directions</h2>
+    
+    </header>
+    
+    
+    <script src='https://api.mapbox.com/mapbox.js/plugins/mapbox-directions.js/v0.4.0/mapbox.directions.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox.js/plugins/mapbox-directions.js/v0.4.0/mapbox.directions.css' type='text/css' />
+
+    <div id='map'></div>
+    <div id='inputs'></div>
+    <div id='errors'></div>
+    <div id='directions'>
+      <div id='routes'></div>
+      <div id='instructions'></div>
+        <div id='mapbox-directions-origin'></div>
+
+    </div>
+    <script>
+    L.mapbox.accessToken = 'pk.eyJ1Ijoib25jZWFkYXkiLCJhIjoiY2lqdThkb25mMGQ5bXU3bThhMjlzZWV2cSJ9.9VILu65Um-aP_J04RRO32w';
+    var map = L.mapbox.map('map', 'mapbox.streets', {
+        zoomControl: false
+    }).setView([37.76, -120.84], 11);
+        
+        
+    $.getJSON("roads_rural_stan.geojson", function(data) {
+            
+            dataLayer = L.geoJson(data, {
+                 style: function(feature) {
+                     console.log(feature.properties['class'])
+                     if (feature.properties['class'] == "R-MJC") {
+                     
+                        return {
+                                color: '#e5f243',
+                                weight: 2
+                            }; } else if (feature.properties['class'] == "R-MA") {
+                                return {
+                                    color: '#27ef0d',
+                                    weight: 3
+                                }
+                            }
+                }          
+            }).addTo(map);
+              
+        });
+        
+    
+        
+//    var map = L.map('map', {
+//            center: [37.76, -120.84],
+//            zoom: 11
+//        });
+        
+//    L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', 
+//        {attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+//      }).addTo(map);
+        
+        
+    // Add Layers
+//    cartodb.createLayer(map, 'https://onceaday.cartodb.com/api/v2/viz/fb4e9522-30a4-11e6-b500-0e674067d321/viz.json')
+//          .addTo(map)
+//          .on('done', function(layer) {
+//            console.log(layer)
+//            console.log(layer.getContainer())
+//            layer.setZIndex(5)
+//            layer
+//              .on('featureOver', function(e, latlng, pos, data) {
+//                console.log(e, latlng, pos, data);
+//              })
+//              .on('error', function(err) {
+//                console.log('error: ' + err);
+//              });
+//          }).on('error', function(err) {
+//            console.log("some error occurred: " + err);
+//          });
+        
+//    var cartoCSS = '#roads {'+
+//   'line-width: 2;'+
+//   'line-opacity: 0.7;'+
+//    '}'+
+//    '#roads[ems_class="ACCESS"] {'+
+//       'line-color: #A6CEE3;'+
+//    '}'+
+//    '#roads[ems_class="ALLEY"] {'+
+//       'line-color: #1F78B4;'+
+//    '}'+
+//    '#roads[ems_class="FREEWAY"] {'+
+//       'line-color: #B2DF8A;'+
+//    '}'+
+//    '#roads[ems_class="HIGHWAY"] {'+
+//       'line-color: #33A02C;'+
+//    '}'+
+//    '#roads[ems_class="HIGHWY"] {'+
+//       'line-color: #FB9A99;'+
+//    '}'+
+//    '#roads[ems_class="LOCAL"] {'+
+//       'line-color: #E31A1C;'+
+//    '}'+
+//    '#roads[ems_class="PRIVATE"] {'+
+//       'line-color: #FDBF6F;'+
+//    '}'+
+//    '#roads[ems_class="Private"] {'+
+//       'line-color: #FF7F00;'+
+//    '}'+
+//    '#roads[ems_class="RAMP"] {'+
+//       'line-color: #CAB2D6;'+
+//    '}'+
+//    '#roads[ems_class=null] {'+
+//       'line-color: #6A3D9A;'+
+//    '}';
+//        
+        var cartoCSS = '#roads_stan2{'+
+      'line-color: #FF6600;'+
+      'line-width: 2;'+
+      'line-opacity: 0.7;'+
+    '}';
+
+
+    var sourceObject = {
+        user_name: 'onceaday',
+        type: 'cartodb',
+        sublayers: [
+            {
+                sql: "SELECT * FROM roads_stan2",
+                cartocss: cartoCSS
+            }  
+        ]
+    }
+
+    
+    cartodb.createLayer(map, sourceObject).addTo(map)
+        .on('done', function(layer) {
+            console.log("Done")
+            console.log(layer)
+            layer.setZIndex(0)
+//            L.control.layers(layer.addTo(map);
+            layer
+              .on('featureOver', function(e, latlng, pos, data) {
+                console.log(e, latlng, pos, data);
+              })
+              .on('error', function(err) {
+                console.log('error: ' + err);
+              });
+          }).on('error', function(err) {
+            console.log("some error occurred: " + err);
+          });
+
+        
+        
+   
+    // move the attribution control out of the way
+    map.attributionControl.setPosition('bottomleft');
+
+    // create the initial directions object, from which the layer
+    // and inputs will pull data.
+    var directions = L.mapbox.directions();
+
+    var directionsLayer = L.mapbox.directions.layer(directions)
+        .addTo(map);
+
+    var directionsInputControl = L.mapbox.directions.inputControl('inputs', directions)
+        .addTo(map);
+
+    var directionsErrorsControl = L.mapbox.directions.errorsControl('errors', directions)
+        .addTo(map);
+
+    var directionsRoutesControl = L.mapbox.directions.routesControl('routes', directions)
+        .addTo(map);
+
+    var directionsInstructionsControl = L.mapbox.directions.instructionsControl('instructions', directions)
+        .addTo(map);
+    </script>
+</body>
+</html>
