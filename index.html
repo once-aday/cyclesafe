@@ -16,7 +16,7 @@
 <head>
     <style>
     header {
-            padding: 6px 10%;
+            padding: 6px 5%;
             text-align: left;
     }
     footer {
@@ -39,9 +39,8 @@
         color: #ffffff;
         text-shadow: 1px 1px #9d9d9d;
         font-size: 30px;
-        padding-right: 175px;
-        margin: 
-
+        padding-right: 55px;
+        text-align: top;
     }
     h2 {
         position: relative;
@@ -52,10 +51,23 @@
         text-align: left;
         font-size: 15px;
         padding-top: 10px;
+        margin-top: 20px
             
     }
+        h3 {
+        position: relative;
+        display: inline-block;
+        margin-top: -20px;
+        color: #ffffff;
+        text-shadow: 1px 1px #9d9d9d;
+        text-align: left;
+        font-size: 15px;
+        padding-top: 10px;
+        padding-right: 60px;
+        margin-left: 10px
+        }
     #map {
-        margin-top: 20%;
+        margin-top: 15%;
 /*        margin-bottom: 15%;*/
     }
     #inputs,
@@ -69,8 +81,8 @@
 
     #inputs {
         z-index: 10;
-        top: 450px;
-        left: 10px;
+        top: 600px;
+        left: 75px;
         padding-top: 10%;
     }
     .mapbox-directions-destination {
@@ -94,8 +106,9 @@
     }
     .mapbox-directions-reverse-input {
         display: none;
+        visibility: hidden
     }
-    .mapbox-directions-icon {
+    #mapbox-directions-icon {
     background-image: url('mapbox.directions.png');
     background-size: 280px 20px;
     background-repeat: no-repeat;
@@ -108,15 +121,14 @@
 }
     #mapbox-directions-icon mapbox-reverse-icon mapbox-directions-reverse-input {
         display: none;
-
+        visibility: hidden;
     }
-        
 
     #directions {
         z-index: 99;
         background: rgba(0,0,0,.8);
         top: 0;
-        margin-top: 20%;
+        margin-top: 15%;
 /*        margin-bottom: 15%;*/
         right: 0;
         bottom: 0;
@@ -132,6 +144,26 @@
         top: 90px;
         left: 10px;
     }
+    .button {
+      padding: 15px 25px;
+      font-size: 24px;
+      text-align: center;
+      cursor: pointer;
+      outline: none;
+      color: #fff;
+      background-color: #4CAF50;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 9px #999;
+    }
+
+    .button:hover {background-color: #3e8e41}
+
+    .button:active {
+      background-color: #15a246;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
 
 
     </style>
@@ -143,10 +175,10 @@
 
         
             
-            <h1>Cycle Safe: Route Planning</h1>
-            <h2>Planning your next bicycle trip?<br>Choose Point A and B for Directions<br>After your route is loaded, click 'Rate Me'<br>Collector Roads (Yellow) average 0-2 ft. shoulder widths<br>Arterial Roads (Green) average 4-8 ft. shoulder widths</h2>
-                    <h2><p id="demo">Your Rating: <br>Collector Road Segments:  <br>Percent of Collectors:  <br>Arterial Road Segments: <br>Percent of Arterials:</p></h2>
-        <button onclick="getRoadNames()">Rate Me</button>
+            <h1>Cycle Safe:<br>Route Rating</h1>
+        <h2>Planning your next bicycle trip?<br>Choose Point A and B for Directions<br>After your route is loaded, click 'Get Route Rating'<br>Collector Roads (<font color="yellow">Yellow</font>) average 0-2 ft. shoulder widths<br>Arterial Roads (<font color="green">Green</font>) average 4-8 ft. shoulder widths</h2>
+                    <h3><p id="demo">Your Rating: <br>Collector Road Segments:  <br>Percent of Collectors:  <br>Arterial Road Segments: <br>Percent of Arterials:</p></h3>
+        <button class='button' onclick="getRoadNames()">Get Route Rating</button>
     
     </header>
 
@@ -237,10 +269,10 @@
         
         if (rma_per > rmjc_per) {
             console.log("Rating: A")
-            rating = "A"
+            rating = "<font color=" + 'green' + ">A</font>"
         } else if (rmjc_per > rma_per) {
             console.log("Rating: B")
-            rating = "B"
+            rating = "<font color=" + 'yellow' + ">B</font>"
         } else {
             console.log("No Rating Available")
             rating = "No Rating Available"
@@ -254,7 +286,7 @@
     L.mapbox.accessToken = 'pk.eyJ1Ijoib25jZWFkYXkiLCJhIjoiY2lqdThkb25mMGQ5bXU3bThhMjlzZWV2cSJ9.9VILu65Um-aP_J04RRO32w';
     var map = L.mapbox.map('map', 'mapbox.streets', {
         zoomControl: false
-    }).setView([37.76, -120.84], 11);
+    }).setView([37.66, -120.74], 11);
         
         
     $.getJSON("roads_rural_stan.geojson", function(data) {
