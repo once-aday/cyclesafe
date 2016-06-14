@@ -19,9 +19,15 @@
             padding: 6px 10%;
             text-align: left;
     }
+    footer {
+        padding: 15px 10%;
+        z-index: 1;
+        
+            
+    }
     body {
             margin: 0;
-            padding: 0;
+            padding-bottom: 100px;
             background: #1f1f1f;
             font-family: Lato, sans-serif;
             color: #bebaba;
@@ -34,12 +40,13 @@
         text-shadow: 1px 1px #9d9d9d;
         font-size: 30px;
         padding-right: 175px;
+        margin: 
 
     }
     h2 {
         position: relative;
         display: inline-block;
-        margin-top: 10px;
+        margin-top: 1px;
         color: #ffffff;
         text-shadow: 1px 1px #9d9d9d;
         text-align: left;
@@ -48,7 +55,8 @@
             
     }
     #map {
-        margin-top: 10%;
+        margin-top: 20%;
+/*        margin-bottom: 15%;*/
     }
     #inputs,
     #errors,
@@ -61,7 +69,7 @@
 
     #inputs {
         z-index: 10;
-        top: 350px;
+        top: 450px;
         left: 10px;
         padding-top: 10%;
     }
@@ -108,7 +116,8 @@
         z-index: 99;
         background: rgba(0,0,0,.8);
         top: 0;
-        margin-top: 10%;
+        margin-top: 20%;
+/*        margin-bottom: 15%;*/
         right: 0;
         bottom: 0;
         overflow: auto;
@@ -129,10 +138,18 @@
 </head>
 <body>
     <header>
-    <h1>Cycle Safe - Route Planning</h1>
-    <h2>Planning your next bicycle trip?<br>Choose Point A and B for Directions</h2>
+        
+<!--    <h1>Cycle Safe - Route Planning</h1>-->
+
+        
+            
+            <h1>Cycle Safe: Route Planning</h1>
+            <h2>Planning your next bicycle trip?<br>Choose Point A and B for Directions<br>After your route is loaded, click 'Rate Me'<br>Collector Roads (Yellow) average 0-2 ft. shoulder widths<br>Arterial Roads (Green) average 4-8 ft. shoulder widths</h2>
+                    <h2><p id="demo">Your Rating: <br>Collector Road Segments:  <br>Percent of Collectors:  <br>Arterial Road Segments: <br>Percent of Arterials:</p></h2>
+        <button onclick="getRoadNames()">Rate Me</button>
     
     </header>
+
     
     
     <script src='https://api.mapbox.com/mapbox.js/plugins/mapbox-directions.js/v0.4.0/mapbox.directions.js'></script>
@@ -148,6 +165,92 @@
 
     </div>
     <script>
+        
+        function getRoadNames() {
+//            document.getElementById("demo").innerHTML = "test";
+            var directions_geojson = directionsLayer.toGeoJSON();
+            
+            road_names = []
+            console.log(directions.directions.routes)
+            
+//            for (i = 0; i < directions.directions.routes.length; i++) {
+//                console.log(console.log(directions.directions.routes[i]["summary"]))
+//            }
+            // Collect the road names from the directions API route, Slice to four characters and all uppercase to create consistency between the different datasets. They use slightly different road names, Mapbox vs. Stanislaus County.
+            for (i = 0; i < directions.directions.routes.length; i++) {
+                
+                for (x = 0; x < directions.directions.routes[i]["steps"].length; x++) {
+                    
+                    if ($.inArray(directions.directions.routes[i]["steps"][x]["way_name"].slice(0,5).toUpperCase(), road_names) == -1) {
+                        road_names.push(directions.directions.routes[i]["steps"][x]["way_name"].slice(0,5).toUpperCase())
+                        }
+                    }    
+                }
+            console.log(road_names)
+            queryRoadNames(road_names)
+
+        }
+        
+        function queryRoadNames(road_names) {
+            
+            rank_rmjc = [] // Array for Collector Roads found
+            rank_rma = [] // Array for Rural Minor Arterial Roads found
+            
+            $.getJSON("roads_rural_stan.geojson", function(data) {
+            
+            dataLayer = L.geoJson(data, {
+                // Check if a road name from the directions route is in the roads layer for stanislaus county, if it is note the shoulder size
+                onEachFeature(feature, layer) {
+                    if ($.inArray(feature.properties['stname'].slice(0,5), road_names) != -1) {
+                        console.log("FOUND:", feature.properties)
+                        
+                        if (feature.properties['class'] == "R-MJC") {
+                            rank_rmjc.push(feature.properties['class']) 
+                        } else if (feature.properties['class'] == "R-MA") {
+                            rank_rma.push(feature.properties['class'])
+                        } else {
+
+                        }
+                        
+                    } else {
+
+                    }
+                }          
+            })
+            document.getElementById("demo").innerHTML = rankingCalc(rank_rmjc, rank_rma)
+
+        })
+                      
+    }
+        
+    function rankingCalc(rank_rmjc, rank_rma) {
+        
+        console.log("Collector Road Segments: ", rank_rmjc.length)
+        
+        rmjc_per = rank_rmjc.length/(rank_rmjc.length+rank_rma.length)*100
+        console.log("Percent of Collectors: ", rmjc_per,"%")
+        
+        console.log("Arterial Road Segments: ", rank_rma.length)
+        
+        rma_per = rank_rma.length/(rank_rmjc.length+rank_rma.length)*100
+        console.log("Percent of Arterials: ", rma_per,"%")
+        
+        if (rma_per > rmjc_per) {
+            console.log("Rating: A")
+            rating = "A"
+        } else if (rmjc_per > rma_per) {
+            console.log("Rating: B")
+            rating = "B"
+        } else {
+            console.log("No Rating Available")
+            rating = "No Rating Available"
+        }
+        
+        return "Your Rating: " + rating + "<br>Collector Road Segments: " + rank_rmjc.length + "<br>Percent of Collectors: " + rmjc_per.toFixed(1) + "%" + "<br>Arterial Road Segments: " + rank_rma.length + "<br>Percent of Arterials: " + rma_per.toFixed(1) + "%"
+  
+        
+    }
+        
     L.mapbox.accessToken = 'pk.eyJ1Ijoib25jZWFkYXkiLCJhIjoiY2lqdThkb25mMGQ5bXU3bThhMjlzZWV2cSJ9.9VILu65Um-aP_J04RRO32w';
     var map = L.mapbox.map('map', 'mapbox.streets', {
         zoomControl: false
@@ -158,7 +261,9 @@
             
             dataLayer = L.geoJson(data, {
                  style: function(feature) {
-                     console.log(feature.properties['class'])
+                
+                     // Rural Major Collector Roads 0 - 2 ft.
+                     // Rural Minor Arterial 4-8 ft.
                      if (feature.properties['class'] == "R-MJC") {
                      
                         return {
@@ -261,8 +366,8 @@
     
     cartodb.createLayer(map, sourceObject).addTo(map)
         .on('done', function(layer) {
-            console.log("Done")
-            console.log(layer)
+
+//            console.log(layer)
             layer.setZIndex(0)
 //            L.control.layers(layer.addTo(map);
             layer
@@ -300,6 +405,35 @@
 
     var directionsInstructionsControl = L.mapbox.directions.instructionsControl('instructions', directions)
         .addTo(map);
+        
+        // convert directions to geojson
+        
+        
+        
+        
+        function sequenceUI() {
+            
+        var dir_select = $('#directions');
+
+            $('.slider')
+                .on('input change', function() {
+                    currentGrade = $(this).val();
+                    updateSymbols();
+                    output.html(currentGrade);
+                });
+        }
+        
+        var directions_geojson = directionsLayer.toGeoJSON();
+//        console.log(directions_geojson)
+
     </script>
+    
+    <footer>
+        
+        
+
+
+    
+    </footer>
 </body>
 </html>
