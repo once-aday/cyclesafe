@@ -183,7 +183,7 @@
             <h1>Cycle Safe:<br>Route Rating</h1>
         <h2>Planning your next bicycle trip?<br>Choose Point A and B for Directions (Click anywhere)<br>After your route is loaded, click 'Get Route Rating'<br>Collector Roads (<font color="yellow">Yellow</font>) average 0-2 ft. shoulder widths<br>Arterial Roads (<font color="green">Green</font>) average 4-8 ft. shoulder widths<br>Example: A: Riverbank  B: Oakdale<br>Source: fhwa.dot.gov 2011<br></h2>
                     <h3><p id="demo">Your Rating: <br>Collector Road Segments:  <br>Percent of Collectors:  <br>Arterial Road Segments: <br>Percent of Arterials:</p></h3>
-        <button class='button' onclick="getRoadNames()">Get Route Rating</button>
+        <button class='button' onclick="getRoadNames()">Get Route &amp; Rating</button>
     
     </header>
 
@@ -205,6 +205,8 @@
         
         function getRoadNames() {
 //            document.getElementById("demo").innerHTML = "test";
+            
+            
             var directions_geojson = directionsLayer.toGeoJSON();
             
             road_names = []
@@ -225,6 +227,7 @@
                 }
             console.log(road_names)
             queryRoadNames(road_names)
+            $('#directions').show()
 
         }
         
@@ -288,6 +291,14 @@
         
     }
         
+        
+    $('#directions').hide();
+        
+//    $('#directions').change(function() {
+//        console.log("show")
+//      $('#directions').show();
+//    });
+        
     L.mapbox.accessToken = 'pk.eyJ1Ijoib25jZWFkYXkiLCJhIjoiY2lqdThkb25mMGQ5bXU3bThhMjlzZWV2cSJ9.9VILu65Um-aP_J04RRO32w';
     var map = L.mapbox.map('map', 'mapbox.streets', {
         zoomControl: false
@@ -305,11 +316,11 @@
                      
                         return {
                                 color: '#e5f243',
-                                weight: 2
+                                weight: 4
                             }; } else if (feature.properties['class'] == "R-MA") {
                                 return {
                                     color: '#27ef0d',
-                                    weight: 3
+                                    weight: 5
                                 }
                             }
                 }          
@@ -317,71 +328,7 @@
               
         });
         
-    
-        
-//    var map = L.map('map', {
-//            center: [37.76, -120.84],
-//            zoom: 11
-//        });
-        
-//    L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', 
-//        {attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-//      }).addTo(map);
-        
-        
-    // Add Layers
-//    cartodb.createLayer(map, 'https://onceaday.cartodb.com/api/v2/viz/fb4e9522-30a4-11e6-b500-0e674067d321/viz.json')
-//          .addTo(map)
-//          .on('done', function(layer) {
-//            console.log(layer)
-//            console.log(layer.getContainer())
-//            layer.setZIndex(5)
-//            layer
-//              .on('featureOver', function(e, latlng, pos, data) {
-//                console.log(e, latlng, pos, data);
-//              })
-//              .on('error', function(err) {
-//                console.log('error: ' + err);
-//              });
-//          }).on('error', function(err) {
-//            console.log("some error occurred: " + err);
-//          });
-        
-//    var cartoCSS = '#roads {'+
-//   'line-width: 2;'+
-//   'line-opacity: 0.7;'+
-//    '}'+
-//    '#roads[ems_class="ACCESS"] {'+
-//       'line-color: #A6CEE3;'+
-//    '}'+
-//    '#roads[ems_class="ALLEY"] {'+
-//       'line-color: #1F78B4;'+
-//    '}'+
-//    '#roads[ems_class="FREEWAY"] {'+
-//       'line-color: #B2DF8A;'+
-//    '}'+
-//    '#roads[ems_class="HIGHWAY"] {'+
-//       'line-color: #33A02C;'+
-//    '}'+
-//    '#roads[ems_class="HIGHWY"] {'+
-//       'line-color: #FB9A99;'+
-//    '}'+
-//    '#roads[ems_class="LOCAL"] {'+
-//       'line-color: #E31A1C;'+
-//    '}'+
-//    '#roads[ems_class="PRIVATE"] {'+
-//       'line-color: #FDBF6F;'+
-//    '}'+
-//    '#roads[ems_class="Private"] {'+
-//       'line-color: #FF7F00;'+
-//    '}'+
-//    '#roads[ems_class="RAMP"] {'+
-//       'line-color: #CAB2D6;'+
-//    '}'+
-//    '#roads[ems_class=null] {'+
-//       'line-color: #6A3D9A;'+
-//    '}';
-//        
+     
         var cartoCSS = '#roads_stan2{'+
       'line-color: #FF6600;'+
       'line-width: 2;'+
@@ -442,6 +389,8 @@
 
     var directionsInstructionsControl = L.mapbox.directions.instructionsControl('instructions', directions)
         .addTo(map);
+        
+        
         
         // convert directions to geojson
         
