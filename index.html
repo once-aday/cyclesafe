@@ -164,7 +164,7 @@
       margin-top: 600px;
       position: absolute;
       padding: 12px 15px;
-      margin-left: -500px;
+      margin-left: -275px;
       font-size: 24px;
       text-align: center;
       cursor: pointer;
@@ -304,15 +304,22 @@
           </div>
 
         </div>
+    
         
-
-                    <h3><p id="demo">Your Rating: <br>Collector Road Segments:  <br>Percent of Collectors:  <br>Arterial Road Segments: <br>Percent of Arterials:</p></h3>
-    
-    
-    
+        
+                
+    <h3><p id="demo">Your Rating: <br>Collector Road Segments:  <br>Percent of Collectors:  <br>Arterial Road Segments: <br>Percent of Arterials:</p></h3>
     
     <button class='button' onclick="getRoadNames()">Get Rating &amp; Directions</button>
+    
+    
+    
+    
+<!--    <button class='button' onclick="getRoadNames()">Get Rating &amp; Directions</button>-->
     <script>
+        
+        $('[id*=demo]').hide();
+
         
         
         
@@ -398,6 +405,11 @@
             console.log("No Rating Available")
             rating = "No Rating Available"
         }
+        
+        $('[id*=demo]').show();
+        $('.button').css( "margin-left", function(m) {
+            return m - 580;
+        });
         
         return "Your Rating: " + rating + "<br>Collector Road Segments: " + rank_rmjc.length + "<br>Percent of Collectors: " + rmjc_per.toFixed(1) + "%" + "<br>Arterial Road Segments: " + rank_rma.length + "<br>Percent of Arterials: " + rma_per.toFixed(1) + "%"
   
@@ -514,6 +526,8 @@
             modal.style.display = "none";
         }
     }
+    
+    
 
     </script>
     
