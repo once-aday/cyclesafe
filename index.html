@@ -37,7 +37,7 @@
         position: relative;
         display: inline-block;
         margin-right: 5px;
-        margin-left: 10px;
+        margin-left: 40px;
         color: #2fcff5;
         text-shadow: 2px 3px #000000;
         font-size: 45px;
@@ -86,7 +86,7 @@
 
     #inputs {
         z-index: 10;
-        top: 600px;
+        top: 460px;
         left: 75px;
         padding-top: 10%;
     }
@@ -161,7 +161,7 @@
         left: 10px;
     }
     .button {
-      margin-top: 790px;
+      margin-top: 640px;
       position: absolute;
       padding: 12px 15px;
       margin-left: -500px;
@@ -414,7 +414,8 @@
         
     L.mapbox.accessToken = 'pk.eyJ1Ijoib25jZWFkYXkiLCJhIjoiY2lqdThkb25mMGQ5bXU3bThhMjlzZWV2cSJ9.9VILu65Um-aP_J04RRO32w';
     var map = L.mapbox.map('map', 'mapbox.streets', {
-        zoomControl: false
+        zoomControl: true,
+        scrollWheelZoom: false
     }).setView([37.66, -120.74], 11);
         
         
