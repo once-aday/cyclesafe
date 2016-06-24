@@ -39,7 +39,7 @@
         margin-right: 5px;
         margin-left: 40px;
         color: #2fcff5;
-        text-shadow: 2px 3px #000000;
+        text-shadow: 1px 3px #000000;
         font-size: 45px;
         padding-right: 20px;
         text-align: justify;
@@ -63,7 +63,7 @@
         margin-top: 10px;
         margin-right: 0px;
         color: #2fcff5;
-        text-shadow: 2px 2px #000000;
+        text-shadow: 1px 2px #000000;
         text-align: left;
         font-size: 20px;
         padding-top: 10px;
@@ -86,7 +86,7 @@
 
     #inputs {
         z-index: 10;
-        top: 460px;
+        top: 420px;
         left: 75px;
         padding-top: 10%;
     }
@@ -161,7 +161,7 @@
         left: 10px;
     }
     .button {
-      margin-top: 640px;
+      margin-top: 600px;
       position: absolute;
       padding: 12px 15px;
       margin-left: -500px;
@@ -296,7 +296,7 @@
               <p><center>Bicycle Route Rating</center></p>
             </div>
             <div class="modal-body">
-              <p><center>Collector Roads (<font color="#bbcb08">Yellow</font>) average 0-2 ft. shoulder widths<br>Arterial Roads (<font color="#00e300">Green</font>) average 4-8 ft. shoulder widths<br><p> Your route rating is calculated by determing what type of road the majority (>50%) of your journey is on. If the majority is on Arterial roads you will receive an A rating. If the majority is on Collector roads you will receive a B rating. More road information and additional datasets will enable more precise ratings for future upgrades to this map.</p></center></p>
+              <p><center>Collector Roads (<font color="#d1d108">Yellow</font>) average 0-2 ft. shoulder widths<br>Arterial Roads (<font color="#00e300">Green</font>) average 4-8 ft. shoulder widths<br><p> Your route rating is calculated by determing what type of road the majority (>50%) of your journey is on. If the majority is on Arterial roads you will receive an A rating. If the majority is on Collector roads you will receive a B rating. More road information and additional datasets will enable more precise ratings for future upgrades to this map.</p></center></p>
             </div>
             <div class="modal-footer">
                 <p align=right>Author: Devin Rocco<br>Source: fhwa.dot.gov 2011</p>
@@ -390,7 +390,7 @@
         
         if (rma_per > rmjc_per) {
             console.log("Rating: A")
-            rating = "<font color=" + 'green' + ">A</font>"
+            rating = "<font color=" + '#09d109' + ">A</font>"
         } else if (rmjc_per > rma_per) {
             console.log("Rating: B")
             rating = "<font color=" + 'yellow' + ">B</font>"
